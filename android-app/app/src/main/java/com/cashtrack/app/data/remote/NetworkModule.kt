@@ -31,7 +31,7 @@ object NetworkModule {
     lateinit var bareClient: OkHttpClient
         private set
 
-    fun build(tokenStore: TokenStore, baseUrl: String): CashTrackApi {
+    fun build(tokenStore: TokenStore, baseUrl: String): ApiService {
         refreshUrl = baseUrl + "api/auth/refresh"
 
         bareClient = OkHttpClient.Builder()
@@ -60,6 +60,6 @@ object NetworkModule {
             .client(client)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
-            .create(CashTrackApi::class.java)
+            .create(ApiService::class.java)
     }
 }

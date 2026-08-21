@@ -31,7 +31,7 @@ import retrofit2.http.Query
  * Retrofit dispatches them on OkHttp's thread pool, so no main-thread
  * network calls are possible by construction.
  */
-interface CashTrackApi {
+interface ApiService {
 
     // ---- Auth ----
     @POST("api/auth/register")
