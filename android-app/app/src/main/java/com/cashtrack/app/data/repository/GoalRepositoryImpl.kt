@@ -24,48 +24,41 @@ class GoalRepositoryImpl(
     override fun observeGoals(): Flow<List<Goal>> =
         dao.observeAll().map { rows -> rows.toGoalDomains() }
 
-    override suspend fun refresh(): Resource<Unit> = try {
-        withContext(Dispatchers.IO) {
-            val remote = api.listGoals()
-            dao.upsertAll(remote.toGoalEntities())
-        }
+    override suspend fun refresh(): Resource<Unit> = safeCall("Couldn't load goals") {
+        val remote = api.listGoals()
+        dao.upsertAll(remote.toGoalEntities())
         Resource.Success(Unit)
-    } catch (e: HttpException) {
-        Resource.Error("Couldn't load goals (HTTP ${e.code()})")
-    } catch (e: IOException) {
-        Resource.Error("Network error — showing cached goals")
     }
 
     override suspend fun createGoal(
         name: String,
         target: Double,
         image: String,
-    ): Resource<Goal> = try {
-        val created = withContext(Dispatchers.IO) {
-            api.createGoal(GoalCreateRequest(name = name, target = target, image = image))
-        }
+    ): Resource<Goal> = safeCall("Couldn't create goal") {
+        val created = api.createGoal(GoalCreateRequest(name = name, target = target, image = image))
         dao.upsert(created.toEntity())
-        Resource.Success(created.toEntity().let { entity ->
+        Resource.Success(
             Goal(
-                id = entity.id, name = entity.name, target = entity.target,
-                current = entity.current, image = entity.image,
-                deadline = entity.deadline, completed = entity.completed,
-                status = entity.status,
+                id = created.id, name = created.name, target = created.target,
+                current = created.current, image = created.image,
+                deadline = created.deadline, completed = created.completed,
+                status = created.status,
             )
-        })
-    } catch (e: HttpException) {
-        Resource.Error("Couldn't create goal (HTTP ${e.code()})")
-    } catch (e: IOException) {
-        Resource.Error("Network error — check your connection")
+        )
     }
 
-    override suspend fun deleteGoal(id: String): Resource<Unit> = try {
-        withContext(Dispatchers.IO) { api.deleteGoal(id) }
+    override suspend fun deleteGoal(id: String): Resource<Unit> = safeCall("Couldn't delete goal") {
+        api.deleteGoal(id)
         dao.deleteById(id)
         Resource.Success(Unit)
-    } catch (e: HttpException) {
-        Resource.Error("Couldn't delete goal (HTTP ${e.code()})")
-    } catch (e: IOException) {
-        Resource.Error("Network error — check your connection")
     }
+
+    private inline fun <T> safeCall(fallback: String, block: () -> Resource<T>): Resource<T> =
+        try {
+            withContext(Dispatchers.IO) { block() }
+        } catch (e: HttpException) {
+            Resource.Error("$fallback (HTTP ${e.code()})")
+        } catch (e: IOException) {
+            Resource.Error("Network error — showing cached goals")
+        }
 }
