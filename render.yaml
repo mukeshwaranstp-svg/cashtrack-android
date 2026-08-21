@@ -1,0 +1,36 @@
+# Render Blueprint — deploys the whole stack in one click:
+#   Render Dashboard -> New + -> Blueprint -> pick this repo -> Apply.
+#
+# Free tier notes:
+#   - The web service spins down after ~15 min idle; first request after that
+#     takes ~50s to wake (cold start). The app shows its error message once,
+#     retry works.
+#   - Free Postgres expires after 30 days. For durable data, create a free
+#     Supabase project and swap the DATABASE_URL env var to its connection
+#     string (the backend already handles sslmode + IPv4 pinning for Supabase).
+
+services:
+  - type: web
+    name: cashtrack-api
+    runtime: docker
+    dockerfilePath: ./android-backend/Dockerfile
+    dockerContext: ./android-backend
+    plan: free
+    region: singapore   # closest free region to India; change if you prefer
+    healthCheckPath: /health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true        # Render generates a strong random secret
+      - key: SECRET_KEY_STRICT
+        value: "1"                 # refuse to boot with the dev secret
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cashtrack-db
+          property: connectionString
+
+databases:
+  - name: cashtrack-db
+    databaseName: cashtrack
+    user: cashtrack
+    plan: free
+    region: singapore

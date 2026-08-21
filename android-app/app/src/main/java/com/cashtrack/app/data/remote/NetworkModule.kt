@@ -35,8 +35,10 @@ object NetworkModule {
         refreshUrl = baseUrl + "api/auth/refresh"
 
         bareClient = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            // Generous timeouts: Render's free tier cold-starts the backend
+            // after ~15 min idle and waking can take ~50s.
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(90, TimeUnit.SECONDS)
             .build()
 
         val logging = HttpLoggingInterceptor().apply {
@@ -49,8 +51,8 @@ object NetworkModule {
             .addInterceptor(AuthInterceptor(tokenStore))
             .authenticator(TokenAuthenticator(tokenStore, json))
             .addInterceptor(logging)
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(90, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()

@@ -53,7 +53,7 @@ class GoalRepositoryImpl(
         Resource.Success(Unit)
     }
 
-    private inline fun <T> safeCall(fallback: String, block: () -> Resource<T>): Resource<T> =
+    private suspend fun <T> safeCall(fallback: String, block: suspend () -> Resource<T>): Resource<T> =
         try {
             withContext(Dispatchers.IO) { block() }
         } catch (e: HttpException) {
