@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+}
+
+/* Global body and html scrolling optimization */
+html {
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
+}
+
+body {
+  background-color: #F8F8FA;
+  color: #111111;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: clip;
+  overscroll-behavior-y: contain;
+  transition: background-color 280ms ease-in-out, color 280ms ease-in-out;
+}
+
+html.dark body {
+  background-color: #0F1117;
+  color: #FFFFFF;
+}
+
+/* Modal Open Body Lock - stops background scrolling when popups/sheets are open */
+body.modal-open,
+body.modal-open main {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+/* Universal cross-browser scrollbar hiding (retains full scrolling functionality) */
+* {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Target transitions specifically to interactive elements */
+button, 
+a, 
+input, 
+select, 
+textarea {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* GPU helper — intentionally inert.
+   Forcing compositing layers (translateZ(0) / will-change: transform) while
+   backdrop-filter / large soft shadows are present triggers a known Android
+   Chrome rendering bug: ghost copies, duplicated cards and horizontal glitch
+   lines. Keeping the class but giving it no styles avoids the bug entirely. */
+.gpu-layer {
+  /* no-op — do not promote elements to GPU layers */
+}
+
+/* Android Chrome compositor-corruption workaround (global).
+   Framer Motion forces `will-change: transform` inline on every animated
+   element (this app has 169+ motion components). On Android Chrome that
+   promotes dozens of GPU layers; combined with large soft shadows the
+   compositor corrupts its output — ghost copies, duplicated cards,
+   overlapping components and horizontal glitch lines. The same corruption is
+   triggered by backdrop-filter, which snapshots the layers behind an element,
+   and by CSS `filter` (drop-shadow) animations.
+   Disabling will-change / backdrop-filter / filter (using !important to beat
+   Framer Motion's inline styles and Tailwind's utilities) stops the promotion
+   and the bug. Animations still run normally; the browser simply does not
+   keep promoted layers around afterwards. Transforms are left untouched so
+   Framer Motion and layout effects keep working. */
+*,
+*::before,
+*::after {
+  will-change: auto !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+
+/* Optimized Scroll Container (Android Chrome: -webkit-overflow-scrolling
+   and scroll-behavior:smooth on an inner overflow container are known
+   corruption triggers during fling scroll, so both are omitted) */
+.scroll-container {
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Pause heavy CSS animations during active scroll for consistent 60 FPS */
+body.is-scrolling .animate-spin,
+body.is-scrolling .animate-bounce,
+body.is-scrolling .animate-pulse,
+body.is-scrolling .animate-ping,
+body.is-scrolling .waguri-float,
+body.is-scrolling .waguri-wave,
+body.is-scrolling .waguri-jump,
+body.is-scrolling .waguri-dance,
+body.is-scrolling .waguri-glow {
+  animation-play-state: paused !important;
+}
+
+/* Hide scrollbar utility class */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}

@@ -1,0 +1,24 @@
+# Secrets & personal data — never push these
+certs/
+data.json
+.env
+*.log
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Node (web frontend)
+node_modules/
+
+# Build output
+dist/
+
+# Local databases
+*.db
+*.sqlite3
+
+# OS junk
+Thumbs.db
+.DS_Store

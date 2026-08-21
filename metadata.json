@@ -1,0 +1,6 @@
+{
+  "name": "CashTrack",
+  "description": "A student budget and expense tracker supporting 70/20/10 financial ratios, streak tracking, and Waguri, your interactive companion mascot.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,47 @@
+name: Build Debug APK
+
+# Builds the Android app on GitHub's servers (free for public repos).
+# No Android Studio or SDK needed on your laptop — the APK comes back as a
+# downloadable artifact you copy to your phone.
+
+on:
+  push:
+    branches: [main, master]
+    paths: ["android-app/**", ".github/workflows/build-apk.yml"]
+  workflow_dispatch: {}   # also runnable manually from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # Point the app at your deployed backend. Set a repo VARIABLE named
+      # BASE_URL (Settings -> Secrets and variables -> Actions -> Variables),
+      # e.g. https://cashtrack-api.onrender.com/ — falls back to the emulator
+      # default if unset.
+      - name: Build debug APK
+        working-directory: android-app
+        run: >
+          gradle assembleDebug --no-daemon
+          -PbaseUrl="${{ vars.BASE_URL || 'http://10.0.2.2:8000/' }}"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cashtrack-debug-apk
+          path: android-app/app/build/outputs/apk/debug/app-debug.apk

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Simple rupee-in-circle mark -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,30 C40.7,30 30,40.7 30,54 C30,67.3 40.7,78 54,78 C67.3,78 78,67.3 78,54 C78,40.7 67.3,30 54,30 Z M62,42 L58,46 L50,46 C49,46 48.2,46.8 48.2,47.8 L48.2,48 L57,48 L53.5,52 L48.2,52 L48.2,56 L51.5,56 L59,64 L64.5,64 L56.5,55.2 C59.5,54.4 61.8,51.7 61.8,48 L63,48 L66.5,44 L62,44 Z" />
+</vector>

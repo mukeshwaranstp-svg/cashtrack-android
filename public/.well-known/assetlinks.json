@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.onrender.cashtrack_um66.twa",
+        "sha256_cert_fingerprints": ["69:4C:ED:05:8D:FA:3C:0B:7A:68:9C:CB:F9:35:C2:72:FC:00:8B:69:5B:52:D2:0E:92:AB:C3:64:EE:DF:60:48"]
+      }
+    }]
